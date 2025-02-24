@@ -9,27 +9,20 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted # This runs on your local machine
+    runs-on: self-hosted
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Execute SQL Scripts
-        shell: powershell
+      - name: Execute SQL Scripts with Windows Authentication
+        shell: cmd
         run: |
-          $server = "(local)"  # Change if using a named instance
-
-          # Ensure SQLCMD is installed
-          if (-not (Get-Command sqlcmd -ErrorAction SilentlyContinue)) {
-            Write-Error "SQLCMD is not installed. Install it from Microsoft SQL Server tools."
-            exit 1
-          }
-
-          # Execute all SQL scripts in order
-          Get-ChildItem -Path "DatabaseAdministration/SQLStatements" -Filter "*.sql" | ForEach-Object {
-              Write-Host "Executing script: $($_.Name)..."
-              sqlcmd -S $server -i $_.FullName
-          }
-
-          Write-Host "✅ All SQL scripts executed successfully!"
+          powershell -Command "& {
+            $server = 'YUVEER';  # Change if using a named instance
+            Get-ChildItem -Path 'DatabaseAdministration/SQLStatements' -Filter '*.sql' | ForEach-Object {
+              Write-Host 'Executing script: ' + $_.Name;
+              sqlcmd -S $server -E -i $_.FullName;  # Using -E for Windows Authentication
+            };
+            Write-Host '✅ All SQL scripts executed successfully!';
+          }"
