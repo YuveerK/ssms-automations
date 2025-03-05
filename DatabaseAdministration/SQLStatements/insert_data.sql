@@ -1,3 +1,4 @@
+-- test
 USE AutoTest;
 GO
 
