@@ -7,6 +7,6 @@ CREATE OR ALTER PROCEDURE InsertUser
     @Email NVARCHAR(100)
 AS
 BEGIN
-    INSERT INTO user (Name, Surname, Email) VALUES (@Name, @Surname, @Email);
+    INSERT INTO users (Name, Surname, Email) VALUES (@Name, @Surname, @Email);
 END;
 GO
