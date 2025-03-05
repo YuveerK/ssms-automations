@@ -15,12 +15,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Execute SQL Scripts with Windows Authentication
+      - name: Execute SQL Scripts with SQL Authentication
         shell: powershell
         run: |
-          $server = "YUVEER"  # Use Windows Authentication, no need for username/password
+          $server = "YUVEER"
+          $username = "Auto_user"
+          $password = "StrongPassword123"
 
-          # Run all SQL scripts in order
           $scripts = @(
               "create_database.sql",
               "create_table.sql",
@@ -30,7 +31,7 @@ jobs:
 
           foreach ($script in $scripts) {
               Write-Host "Executing script: $script..."
-              sqlcmd -S $server -E -d AutoTest -i "DatabaseAdministration/SQLStatements/$script"
+              sqlcmd -S $server -U $username -P $password -d AutoTest -i "DatabaseAdministration/SQLStatements/$script"
           }
 
           Write-Host "✅ Database setup complete!"
