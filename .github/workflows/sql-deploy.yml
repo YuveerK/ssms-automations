@@ -40,16 +40,19 @@ jobs:
 
           Write-Host "Database setup complete!"
 
-      - name: Download and Install ngrok if not available
+      - name: Download and Install ngrok v3 if not available
         shell: powershell
         run: |
           $ngrokPath = "C:\ngrok\ngrok.exe"
           if (-Not (Test-Path $ngrokPath)) {
-              Write-Host "Downloading ngrok..."
-              Invoke-WebRequest -Uri "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip" -OutFile ngrok.zip
+              Write-Host "Downloading ngrok v3..."
+              # Update this link if ngrok changes their download URL again
+              $ngrokUrl = "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip"
+              
+              Invoke-WebRequest -Uri $ngrokUrl -OutFile ngrok.zip
               Expand-Archive -Path ngrok.zip -DestinationPath C:\ngrok -Force
               Remove-Item ngrok.zip -Force
-              Write-Host "Ngrok installed successfully!"
+              Write-Host "Ngrok v3 installed successfully!"
           } else {
               Write-Host "Ngrok already installed."
           }
