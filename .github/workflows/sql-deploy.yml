@@ -67,5 +67,5 @@ jobs:
           Start-Sleep -Seconds 5
 
           # Capture ngrok public URL
-          $ngrokURL = & $ngrokPath tcp 1433 | Select-String "tcp://" | ForEach-Object { $_.Matches.Value }
+          $ngrokURL = & $ngrokPath http config | Select-String "tcp://" | ForEach-Object { $_.Matches.Value }
           Write-Host "🚀 SQL Server is publicly accessible at: $ngrokURL"
