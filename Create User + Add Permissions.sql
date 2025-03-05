@@ -12,3 +12,8 @@ go
 -- Grant full access to the database
 alter server role sysadmin add member Auto_user;
 go
+
+
+-- Give db creation privileges
+ALTER SERVER ROLE dbcreator ADD MEMBER Auto_user;
+GO

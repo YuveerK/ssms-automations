@@ -22,8 +22,12 @@ jobs:
           $username = "Auto_user"
           $password = "StrongPassword123"
 
+          # Step 1: Run create_database.sql without -d AutoTest
+          Write-Host "Executing script: create_database.sql..."
+          sqlcmd -S $server -U $username -P $password -i "DatabaseAdministration/SQLStatements/create_database.sql"
+
+          # Step 2: Run the remaining scripts with -d AutoTest
           $scripts = @(
-              "create_database.sql",
               "create_table.sql",
               "insert_user_sp.sql",
               "insert_data.sql"
