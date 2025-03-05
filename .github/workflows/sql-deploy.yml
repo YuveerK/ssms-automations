@@ -54,6 +54,21 @@ jobs:
               Write-Host "Ngrok already installed."
           }
 
+      - name: Configure ngrok
+        shell: powershell
+        env:
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+        run: |
+          $ngrokPath = "C:\ngrok\ngrok.exe"
+          if (-Not (Test-Path $ngrokPath)) {
+              Write-Host "Ngrok not found!"
+              exit 1
+          }
+
+          Write-Host "Configuring ngrok with authtoken..."
+          & $ngrokPath authtoken $env:NGROK_AUTH_TOKEN
+          Write-Host "ngrok configured!"
+
       - name: Start ngrok to expose SQL Server
         shell: powershell
         run: |
