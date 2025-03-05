@@ -48,6 +48,7 @@ jobs:
               Write-Host "🔽 Downloading ngrok..."
               Invoke-WebRequest -Uri "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip" -OutFile ngrok.zip
               Expand-Archive -Path ngrok.zip -DestinationPath C:\ngrok -Force
+              Remove-Item ngrok.zip -Force
               Write-Host "✅ Ngrok installed successfully!"
           } else {
               Write-Host "✅ Ngrok already installed."
@@ -67,5 +68,5 @@ jobs:
           Start-Sleep -Seconds 5
 
           # Capture ngrok public URL
-          $ngrokURL = & $ngrokPath tcp 1433 | Select-String "tcp://" | ForEach-Object { $_.Matches.Value }
+          $ngrokURL = & $ngrokPath tcp status | Select-String "tcp://" | ForEach-Object { $_.Matches.Value }
           Write-Host "🚀 SQL Server is publicly accessible at: $ngrokURL"

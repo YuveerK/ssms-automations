@@ -1,4 +1,4 @@
--- Test 9
+-- Test 10
 USE AutoTest;
 GO
 
