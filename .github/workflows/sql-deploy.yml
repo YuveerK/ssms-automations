@@ -16,13 +16,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Execute SQL Scripts with Windows Authentication
-        shell: cmd
+        shell: powershell
         run: |
-          powershell -Command "& {
-            $server = 'YUVEER';  # Change if using a named instance
-            Get-ChildItem -Path 'DatabaseAdministration/SQLStatements' -Filter '*.sql' | ForEach-Object {
-              Write-Host 'Executing script: ' + $_.Name;
-              sqlcmd -S $server -E -i $_.FullName;  # Using -E for Windows Authentication
-            };
-            Write-Host '✅ All SQL scripts executed successfully!';
-          }"
+          $server = 'YUVEER'  # Change if using a named instance
+          Get-ChildItem -Path 'DatabaseAdministration/SQLStatements' -Filter '*.sql' | ForEach-Object {
+            Write-Host "Executing script: $($_.Name)"
+            sqlcmd -S $server -E -i $_.FullName  # Using -E for Windows Authentication
+          }
+          Write-Host '✅ All SQL scripts executed successfully!'
