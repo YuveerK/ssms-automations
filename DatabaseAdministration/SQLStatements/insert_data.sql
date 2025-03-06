@@ -1,4 +1,4 @@
--- Test 17
+-- Test 18
 USE AutoTest;
 GO
 
