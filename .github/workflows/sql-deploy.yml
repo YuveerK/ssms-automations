@@ -15,27 +15,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Execute SQL Scripts with SQL Authentication
-        shell: powershell
+      - name: Execute SQL Scripts with Windows Authentication
+        shell: cmd
         run: |
-          $server = "YUVEER"
-          $username = "Auto_user"
-          $password = "StrongPassword123"
-
-          # Step 1: Run create_database.sql without -d AutoTest
-          Write-Host "Executing script: create_database.sql..."
-          sqlcmd -S $server -U $username -P $password -i "DatabaseAdministration/SQLStatements/create_database.sql"
-
-          # Step 2: Run the remaining scripts with -d AutoTest
-          $scripts = @(
-              "create_table.sql",
-              "insert_user_sp.sql",
-              "insert_data.sql"
-          )
-
-          foreach ($script in $scripts) {
-              Write-Host "Executing script: $script..."
-              sqlcmd -S $server -U $username -P $password -d AutoTest -i "DatabaseAdministration/SQLStatements/$script"
-          }
-
-          Write-Host "Database setup complete!"
+          powershell -Command "& {
+            $server = 'YUVEER';  # Change if using a named instance
+            Get-ChildItem -Path 'DatabaseAdministration/SQLStatements' -Filter '*.sql' | ForEach-Object {
+              Write-Host 'Executing script: ' + $_.Name;
+              sqlcmd -S $server -E -i $_.FullName;  # Using -E for Windows Authentication
+            };
+            Write-Host '✅ All SQL scripts executed successfully!';
+          }"
