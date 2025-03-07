@@ -1,4 +1,4 @@
--- Test 21
+-- Test 23
 USE AutoTest;
 GO
 
