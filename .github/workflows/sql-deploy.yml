@@ -24,16 +24,28 @@ jobs:
           echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
           source ~/.bashrc
 
-      - name: Execute SQL Scripts on Remote SQL Server
+      - name: Execute SQL Scripts on Remote SQL Server with Detailed Logs
         run: |
           for file in DatabaseAdministration/SQLStatements/*.sql
           do
-            echo "🚀 Executing $file"
+            echo "========================================"
+            echo "🚀 Executing SQL file: $file"
+            echo "----------------------------------------"
+            cat "$file"
+            echo "----------------------------------------"
             /opt/mssql-tools/bin/sqlcmd \
               -S "${{ secrets.DB_SERVER }}" \
               -U "${{ secrets.DB_USER }}" \
               -P "${{ secrets.DB_PASS }}" \
               -d "${{ secrets.DB_NAME }}" \
               -i "$file"
+
+            if [ $? -eq 0 ]; then
+              echo "✅ Successfully executed: $file"
+            else
+              echo "❌ Failed to execute: $file"
+              exit 1
+            fi
+            echo "========================================"
           done
         shell: bash
