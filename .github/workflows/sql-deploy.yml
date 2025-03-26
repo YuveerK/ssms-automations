@@ -67,7 +67,7 @@ jobs:
     needs: deploy_to_development
     runs-on: ubuntu-latest
     environment:
-      name: Production 🚀
+      name: production
       url: https://pinggy-production-url # Optional: add your partner's tunnel URL here
     concurrency: production
     steps:
