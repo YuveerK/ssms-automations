@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy_to_development:
-    name: Deploy to Development (Local)
+    name: Deploy to Development (Local) ⚠️
     runs-on: ubuntu-latest
     environment: development
 
@@ -54,7 +54,7 @@ jobs:
             echo "========================================"
           }
 
-          run_sql "DatabaseAdministration/SQLStatements/01_create_database.sql" "master"
+          run_sql "DatabaseAdministration/SQLStatements/01_create_database_sp.sql" "master"
 
           for file in "DatabaseAdministration/SQLStatements/"0[2-9]_*.sql
           do
@@ -103,7 +103,7 @@ jobs:
             echo "========================================"
           }
 
-          run_sql "DatabaseAdministration/SQLStatements/01_create_database.sql" "master"
+          run_sql "DatabaseAdministration/SQLStatements/01_create_database_sp.sql" "master"
 
           for file in "DatabaseAdministration/SQLStatements/"0[2-9]_*.sql
           do
