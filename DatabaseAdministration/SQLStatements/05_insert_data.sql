@@ -1,5 +1,4 @@
--- Test 19
-USE AutoTest;
+USE AutoDBYuveer;
 GO
 
 EXEC InsertUser 'John', 'Doe', 'john.doe@example.com';

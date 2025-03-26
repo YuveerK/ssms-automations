@@ -1,5 +1,4 @@
--- Test 1.5
-USE AutoTest;
+USE AutoDBYuveer;
 GO
 
 CREATE OR ALTER PROCEDURE InsertUser
@@ -8,6 +7,7 @@ CREATE OR ALTER PROCEDURE InsertUser
     @Email NVARCHAR(100)
 AS
 BEGIN
-    INSERT INTO users (Name, Surname, Email) VALUES (@Name, @Surname, @Email);
+    INSERT INTO users (Name, Surname, Email)
+    VALUES (@Name, @Surname, @Email);
 END;
 GO
