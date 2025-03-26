@@ -1,4 +1,4 @@
--- Test 0.7
+-- Test 1.1
 USE AutoTest;
 GO
 
