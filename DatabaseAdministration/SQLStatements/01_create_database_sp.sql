@@ -10,3 +10,6 @@ BEGIN
     END
 END;
 GO
+
+EXEC CreateAutoDatabase;
+GO
