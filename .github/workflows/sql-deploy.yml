@@ -14,10 +14,6 @@ jobs:
     uses: ./.github/workflows/sql-deployment-template.yml
     with:
       environment: development
-      db_server: ${{ secrets.DB_SERVER }}
-      db_user: ${{ secrets.DB_USER }}
-      db_pass: ${{ secrets.DB_PASS }}
-      db_name: ${{ secrets.DB_NAME }}
     secrets:
       DB_SERVER: ${{ secrets.DB_SERVER }}
       DB_USER: ${{ secrets.DB_USER }}
@@ -30,10 +26,6 @@ jobs:
     uses: ./.github/workflows/sql-deployment-template.yml
     with:
       environment: production
-      db_server: ${{ secrets.PROD_DB_SERVER }}
-      db_user: ${{ secrets.PROD_DB_USER }}
-      db_pass: ${{ secrets.PROD_DB_PASS }}
-      db_name: ${{ secrets.PROD_DB_NAME }}
     secrets:
       DB_SERVER: ${{ secrets.PROD_DB_SERVER }}
       DB_USER: ${{ secrets.PROD_DB_USER }}
