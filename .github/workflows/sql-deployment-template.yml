@@ -33,13 +33,20 @@ jobs:
           key: ${{ runner.os }}-sqlcmd-${{ hashFiles('**/sql-deploy.yml') }}
           restore-keys: ${{ runner.os }}-sqlcmd-
 
-      - name: ⚙ Install SQLCMD Tools
+      - name: ⚙ Install SQLCMD Tools & Driver
         if: steps.cache-sqlcmd.outputs.cache-hit != 'true'
         run: |
           curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
           curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
           sudo apt-get update
-          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql17 mssql-tools unixodbc-dev
+          sudo ACCEPT_EULA=Y apt-get install -y \
+            msodbcsql17 \
+            mssql-tools \
+            unixodbc-dev \
+            libodbc1 \
+            odbcinst1debian2 \
+            gnupg2 \
+            curl
 
       - name: 🔢 Debug Secret Status
         run: |
