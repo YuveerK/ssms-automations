@@ -76,10 +76,10 @@ jobs:
           }
 
           # First, create or update the DB from master
-          run_sql "DatabaseAdministration/SQLStatements/Database Automation Scripts/01_create_database_sp.sql" "master"
+          run_sql "DatabaseAdministration/SQLStatements/Database_Automation_Scripts/01_create_database_sp.sql" "master"
 
           # Next, run all other scripts in the user's DB
-          for file in "DatabaseAdministration/SQLStatements/Database Automation Scripts/0[2-9]_*.sql"; do
+          for file in "DatabaseAdministration/SQLStatements/Database_Automation_Scripts/0[2-9]_*.sql"; do
             if [ -f "$file" ]; then
               run_sql "$file" "${{ secrets.DB_NAME }}"
             else

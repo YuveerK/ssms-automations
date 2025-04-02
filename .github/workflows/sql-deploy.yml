@@ -3,7 +3,7 @@ name: SSMS Database Automation
 on:
   push:
     paths:
-      - "DatabaseAdministration/SQLStatements/Database Automation Scripts/*.sql"
+      - "DatabaseAdministration/SQLStatements/Database_Automation_Scripts/*.sql"
     branches:
       - main
   workflow_dispatch:
