@@ -54,7 +54,7 @@ jobs:
             echo "========================================"
           }
 
-          run_sql "DatabaseAdministration/SQLStatements/01_create_database.sql" "master"
+          run_sql "DatabaseAdministration/SQLStatements/01_create_database_sp.sql" "master"
 
           for file in "DatabaseAdministration/SQLStatements/"0[2-9]_*.sql
           do
