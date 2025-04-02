@@ -48,6 +48,13 @@ jobs:
           echo "✅ DB_NAME is set"
           [ -z "${{ secrets.DB_PASS }}" ] && echo "❌ DB_PASS is missing!" || echo "✅ DB_PASS is set"
 
+      - name: 🧪 Test SQL Server connection
+        run: |
+          /opt/mssql-tools/bin/sqlcmd -S "${{ secrets.DB_SERVER }}" \
+            -U "${{ secrets.DB_USER }}" \
+            -P "${{ secrets.DB_PASS }}" \
+            -Q "SELECT GETDATE()" || { echo "❌ Connection failed"; exit 1; }
+
       - name: ⚡ Run SQL Scripts
         run: |
           set -e
