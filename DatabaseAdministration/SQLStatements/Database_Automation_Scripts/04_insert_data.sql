@@ -1,4 +1,4 @@
--- test 4sssssssssss
+-- test 4ssssssssssss
 USE AutoDBYuveer;
 GO
 
