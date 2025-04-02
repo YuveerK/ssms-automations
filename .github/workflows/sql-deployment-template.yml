@@ -26,16 +26,7 @@ jobs:
       - name: 📅 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 📃 Cache SQLCMD Tools
-        id: cache-sqlcmd
-        uses: actions/cache@v3
-        with:
-          path: /opt/mssql-tools
-          key: ${{ runner.os }}-sqlcmd-${{ hashFiles('**/sql-deploy.yml') }}
-          restore-keys: ${{ runner.os }}-sqlcmd-
-
       - name: ⚙ Install SQLCMD + ODBC Driver
-        if: steps.cache-sqlcmd.outputs.cache-hit != 'true'
         run: |
           curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
           curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
