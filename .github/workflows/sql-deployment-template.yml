@@ -53,6 +53,8 @@ jobs:
           set -e
           trap 'echo "🔥 Script failed on line $LINENO. Exiting..."; exit 1' ERR
 
+          SCRIPT_DIR="DatabaseAdministration/SQLStatements/Database Automation Scripts"
+
           run_sql() {
             local file=$1
             local db=$2
@@ -73,9 +75,9 @@ jobs:
             echo "========================================"
           }
 
-          run_sql "DatabaseAdministration/SQLStatements/Database Automation Scripts/01_create_database_sp.sql" "master"
+          run_sql "$SCRIPT_DIR/01_create_database_sp.sql" "master"
 
-          for file in DatabaseAdministration/SQLStatements/Database Automation Scripts/0[2-9]_*.sql; do
+          for file in "$SCRIPT_DIR"/0[2-9]_*.sql; do
             if [ -f "$file" ]; then
               run_sql "$file" "${{ secrets.DB_NAME }}"
             else
