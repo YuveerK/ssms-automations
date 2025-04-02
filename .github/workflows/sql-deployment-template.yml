@@ -6,6 +6,18 @@ on:
       environment:
         required: true
         type: string
+      db_server:
+        required: true
+        type: string
+      db_user:
+        required: true
+        type: string
+      db_pass:
+        required: true
+        type: string
+      db_name:
+        required: true
+        type: string
     secrets:
       DB_SERVER:
         required: true
@@ -33,20 +45,13 @@ jobs:
           key: ${{ runner.os }}-sqlcmd-${{ hashFiles('**/sql-deploy.yml') }}
           restore-keys: ${{ runner.os }}-sqlcmd-
 
-      - name: ⚙ Install SQLCMD Tools & Driver
+      - name: ⚙ Install SQLCMD Tools
         if: steps.cache-sqlcmd.outputs.cache-hit != 'true'
         run: |
           curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
           curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
           sudo apt-get update
-          sudo ACCEPT_EULA=Y apt-get install -y \
-            msodbcsql17 \
-            mssql-tools \
-            unixodbc-dev \
-            libodbc1 \
-            odbcinst1debian2 \
-            gnupg2 \
-            curl
+          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
 
       - name: 🔢 Debug Secret Status
         run: |
@@ -59,8 +64,6 @@ jobs:
         run: |
           set -e
           trap 'echo "🔥 Script failed on line $LINENO. Exiting..."; exit 1' ERR
-
-          SCRIPT_DIR="DatabaseAdministration/SQLStatements/Database Automation Scripts"
 
           run_sql() {
             local file=$1
@@ -82,9 +85,9 @@ jobs:
             echo "========================================"
           }
 
-          run_sql "$SCRIPT_DIR/01_create_database_sp.sql" "master"
+          run_sql "DatabaseAdministration/SQLStatements/Database Automation Scripts/01_create_database_sp.sql" "master"
 
-          for file in "$SCRIPT_DIR"/0[2-9]_*.sql; do
+          for file in DatabaseAdministration/SQLStatements/Database Automation Scripts/0[2-9]_*.sql; do
             if [ -f "$file" ]; then
               run_sql "$file" "${{ secrets.DB_NAME }}"
             else
