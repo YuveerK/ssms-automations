@@ -3,13 +3,15 @@ name: SSMS Database Automation
 on:
   push:
     paths:
-      - DatabaseAdministration/SQLStatements/**.sql
+      - "DatabaseAdministration/SQLStatements/*.sql"
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   deploy_to_development:
-    uses: ./.github/workflows/sql-deploy-template.yml
+    name: Deploy to Development (Local) 🚧
+    uses: ./.github/workflows/sql-deployment-template.yml
     with:
       environment: development
     secrets:
@@ -19,8 +21,9 @@ jobs:
       DB_NAME: ${{ secrets.DB_NAME }}
 
   deploy_to_production:
+    name: Deploy to Production (Accountability Partner Machine) 🚀
     needs: deploy_to_development
-    uses: ./.github/workflows/sql-deploy-template.yml
+    uses: ./.github/workflows/sql-deployment-template.yml
     with:
       environment: production
     secrets:
@@ -28,3 +31,4 @@ jobs:
       DB_USER: ${{ secrets.PROD_DB_USER }}
       DB_PASS: ${{ secrets.PROD_DB_PASS }}
       DB_NAME: ${{ secrets.PROD_DB_NAME }}
+    concurrency: production

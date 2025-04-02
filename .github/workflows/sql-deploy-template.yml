@@ -17,56 +17,72 @@ on:
         required: true
 
 jobs:
-  deploy_sql:
+  deploy:
     name: Deploy to ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
 
     steps:
-      - name: 📥 Checkout repository
+      - name: 📅 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🛠 Install SQLCMD Tools
+      - name: 📃 Cache SQLCMD Tools
+        id: cache-sqlcmd
+        uses: actions/cache@v3
+        with:
+          path: /opt/mssql-tools
+          key: ${{ runner.os }}-sqlcmd-${{ hashFiles('**/sql-deploy.yml') }}
+          restore-keys: ${{ runner.os }}-sqlcmd-
+
+      - name: ⚙ Install SQLCMD Tools
+        if: steps.cache-sqlcmd.outputs.cache-hit != 'true'
         run: |
           curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
           curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
           sudo apt-get update
           sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
 
-      - name: ⚙ Run SQL Scripts (${{ inputs.environment }})
+      - name: 🔢 Debug Secret Status
+        run: |
+          echo "✅ DB_SERVER is set"
+          echo "✅ DB_USER is set"
+          echo "✅ DB_NAME is set"
+          [ -z "${{ secrets.DB_PASS }}" ] && echo "❌ DB_PASS is missing!" || echo "✅ DB_PASS is set"
+
+      - name: ⚡ Run SQL Scripts
         shell: bash
         run: |
           set -e
+          trap 'echo "🔥 Script failed on line $LINENO. Exiting..."; exit 1' ERR
+
           run_sql() {
             local file=$1
             local db=$2
             echo "========================================"
-            echo "🚀 Executing SQL file: $file on database: $db"
+            echo "🚀 Executing $file on $db"
             echo "----------------------------------------"
-            /opt/mssql-tools/bin/sqlcmd \
+            if /opt/mssql-tools/bin/sqlcmd \
               -S "${{ secrets.DB_SERVER }}" \
               -U "${{ secrets.DB_USER }}" \
               -P "${{ secrets.DB_PASS }}" \
               -d "$db" \
-              -i "$file"
-            if [ $? -eq 0 ]; then
-              echo "✅ Success: $file"
+              -i "$file"; then
+              echo "✅ Successfully executed $file"
             else
-              echo "❌ Failed: $file"
+              echo "❌ Error: Failed to execute $file"
               exit 1
             fi
             echo "========================================"
           }
 
-          {
-            echo "⚙ Starting SQL Deployment"
-            run_sql "DatabaseAdministration/SQLStatements/01_create_database_sp.sql" "master"
+          echo "⚙ Starting SQL Deployment"
 
-            for file in DatabaseAdministration/SQLStatements/0[2-9]_*.sql
-            do
+          run_sql "DatabaseAdministration/SQLStatements/01_create_database_sp.sql" "master"
+
+          for file in DatabaseAdministration/SQLStatements/0[2-9]_*.sql; do
+            if [ -f "$file" ]; then
               run_sql "$file" "${{ secrets.DB_NAME }}"
-            done
-          } || {
-            echo "❌ SQL Deployment failed on ${{ inputs.environment }}"
-            exit 1
-          }
+            else
+              echo "⚠️ Skipping: No matching files found"
+            fi
+          done
