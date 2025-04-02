@@ -17,6 +17,12 @@ jobs:
       db_pass: ${{ secrets.DB_PASS }}
       db_name: ${{ secrets.DB_NAME }}
 
+    secrets:
+      DB_SERVER: ${{ secrets.DB_SERVER }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+
   deploy_to_production:
     needs: deploy_to_development
     uses: ./.github/workflows/sql-deploy-template.yml
@@ -26,3 +32,9 @@ jobs:
       db_user: ${{ secrets.PROD_DB_USER }}
       db_pass: ${{ secrets.PROD_DB_PASS }}
       db_name: ${{ secrets.PROD_DB_NAME }}
+
+    secrets:
+      DB_SERVER: ${{ secrets.PROD_DB_SERVER }}
+      DB_USER: ${{ secrets.PROD_DB_USER }}
+      DB_PASS: ${{ secrets.PROD_DB_PASS }}
+      DB_NAME: ${{ secrets.PROD_DB_NAME }}

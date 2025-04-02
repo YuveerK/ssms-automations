@@ -6,18 +6,15 @@ on:
       environment:
         required: true
         type: string
-      db_server:
+    secrets:
+      DB_SERVER:
         required: true
-        type: string
-      db_user:
+      DB_USER:
         required: true
-        type: string
-      db_pass:
+      DB_PASS:
         required: true
-        type: string
-      db_name:
+      DB_NAME:
         required: true
-        type: string
 
 jobs:
   deploy_sql:
@@ -47,9 +44,9 @@ jobs:
             echo "🚀 Executing SQL file: $file on database: $db"
             echo "----------------------------------------"
             /opt/mssql-tools/bin/sqlcmd \
-              -S "${{ inputs.db_server }}" \
-              -U "${{ inputs.db_user }}" \
-              -P "${{ inputs.db_pass }}" \
+              -S "${{ secrets.DB_SERVER }}" \
+              -U "${{ secrets.DB_USER }}" \
+              -P "${{ secrets.DB_PASS }}" \
               -d "$db" \
               -i "$file"
             if [ $? -eq 0 ]; then
@@ -67,7 +64,7 @@ jobs:
 
             for file in "DatabaseAdministration/SQLStatements/"0[2-9]_*.sql"
             do
-              run_sql "$file" "${{ inputs.db_name }}"
+              run_sql "$file" "${{ secrets.DB_NAME }}"
             done
           } || {
             echo "❌ SQL Deployment failed on ${{ inputs.environment }}"
