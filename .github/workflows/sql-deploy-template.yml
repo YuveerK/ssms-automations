@@ -1,0 +1,75 @@
+name: SQL Deployment Template
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      db_server:
+        required: true
+        type: string
+      db_user:
+        required: true
+        type: string
+      db_pass:
+        required: true
+        type: string
+      db_name:
+        required: true
+        type: string
+
+jobs:
+  deploy_sql:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🛠 Install SQLCMD Tools
+        run: |
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+          curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
+
+      - name: ⚙ Run SQL Scripts (${{ inputs.environment }})
+        shell: bash
+        run: |
+          set -e
+          run_sql() {
+            local file=$1
+            local db=$2
+            echo "========================================"
+            echo "🚀 Executing SQL file: $file on database: $db"
+            echo "----------------------------------------"
+            /opt/mssql-tools/bin/sqlcmd \
+              -S "${{ inputs.db_server }}" \
+              -U "${{ inputs.db_user }}" \
+              -P "${{ inputs.db_pass }}" \
+              -d "$db" \
+              -i "$file"
+            if [ $? -eq 0 ]; then
+              echo "✅ Success: $file"
+            else
+              echo "❌ Failed: $file"
+              exit 1
+            fi
+            echo "========================================"
+          }
+
+          {
+            echo "⚙ Starting SQL Deployment"
+            run_sql "DatabaseAdministration/SQLStatements/01_create_database_sp.sql" "master"
+
+            for file in "DatabaseAdministration/SQLStatements/"0[2-9]_*.sql"
+            do
+              run_sql "$file" "${{ inputs.db_name }}"
+            done
+          } || {
+            echo "❌ SQL Deployment failed on ${{ inputs.environment }}"
+            exit 1
+          }
